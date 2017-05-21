@@ -1,0 +1,645 @@
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>disp
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>display cu
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>display current-configuration  
+2017-05-03 22:49:49.080 
+!Software Version V500R002C00SPC100
+#
+sysname HZ_dg_YX_MAN_2#2F06_E1000E-1
+#
+ undo l2tp sendaccm enable
+ l2tp domain suffix-separator @
+#
+info-center source URL channel 0 log state off
+info-center source URL channel 4 log state off
+#
+ ipsec sha2 compatible enable
+#
+ undo factory-configuration prohibit
+#
+clock timezone UTC add 00:00:00
+#
+ hrp enable
+ hrp interface Eth-Trunk0 remote 100.127.240.74
+ hrp configuration auto-check 1440
+ undo hrp adjust ospfv3-cost enable
+#
+ firewall packet-filter basic-protocol enable
+#
+ firewall detect ftp
+#                                         
+ firewall defend action discard
+#
+ log type traffic enable
+ log type syslog enable
+ log type policy enable
+#
+ undo dataflow enable
+#
+ undo sa force-detection enable
+#
+ isp name "china mobile" set filename china-mobile.csv
+ isp name "china unicom" set filename china-unicom.csv
+ isp name "china telecom" set filename china-telecom.csv
+ isp name "china educationnet" set filename china-educationnet.csv
+#
+ user-manage web-authentication security port 8887
+password-policy
+ level high
+user-manage single-sign-on ad
+user-manage single-sign-on tsm
+user-manage single-sign-on radius
+user-manage sso-sync radius
+page-setting
+ user-manage security version tlsv1 tlsv1.1 tlsv1.2
+#
+ firewall ids authentication type sha256
+#
+ snmp-agent session history-max-number enable
+#
+ web-manager security version tlsv1 tlsv1.1 tlsv1.2
+#
+firewall dataplane to manageplane application-apperceive default-action drop
+#
+dns resolve
+#
+dhcp enable
+#
+ update schedule ips-sdb daily 00:02
+ update schedule av-sdb daily 00:02
+ update schedule sa-sdb daily 00:02
+ update schedule ip-reputation daily 00:02
+ update schedule cnc daily 00:02
+#
+ set disk-scan parameter attach on
+ set disk-scan parameter cycle 15
+ set disk-scan parameter iostat 80
+ set disk-scan parameter speed 10
+ set disk-scan parameter switch on        
+ set disk-scan parameter parallel 50
+#
+ time-range worktime
+  period-range 08:00:00 to 18:00:00 working-day
+#
+aaa
+ authentication-scheme default
+ authentication-scheme admin_local
+ authentication-scheme admin_radius_local
+ authentication-scheme admin_hwtacacs_local
+ authentication-scheme admin_ad_local
+ authentication-scheme admin_ldap_local
+ authentication-scheme admin_radius
+ authentication-scheme admin_hwtacacs
+ authentication-scheme admin_ad
+ authentication-scheme admin_ldap
+ authentication-scheme admin_securid
+ authentication-scheme admin_securid_local
+ authorization-scheme default
+ accounting-scheme default
+ domain default
+  service-type internetaccess ssl-vpn l2tp ike
+  internet-access mode password
+  reference user current-domain           
+  new-user deny-authentication
+ manager-user audit-admin
+  password cipher %@%@HKl2%tx4`.z;XK6xe1m1Pxof#QBZ)S`QuL_`csM)r{cFO!up%@%@
+  service-type web terminal
+  level 15
+
+ manager-user admin
+  password cipher %@%@2[v[KfXLRQ`.G~$/v2rG`;2)e>%WY*Um`EBDg+=56z2E#A83%@%@
+  service-type web terminal
+  level 15
+  ftp-directory hda1:
+
+ manager-user huawei
+  password cipher %@%@gt5&'Sm0i8gO$;W`|O|R=<3*NXn[CNcgsDgaZ("ZFp8([B94%@%@
+  service-type telnet
+  level 15
+  ftp-directory hda1:
+
+ role system-admin
+ role device-admin
+ role device-admin(monitor)
+ role audit-admin
+ bind manager-user audit-admin role audit-admin
+ bind manager-user admin role system-admin
+#
+interface Eth-Trunk0
+ ip address 100.127.240.73 255.255.255.252
+ mode lacp-static
+ service-manage ping permit
+ service-manage telnet permit
+#
+l2tp-group default-lns
+#
+interface GigabitEthernet0/0/0
+ undo shutdown
+ ip address 192.168.0.1 255.255.255.0
+ anti-ddos flow-statistic enable
+ anti-ddos syn-flood source-detect alert-rate 100
+ service-manage http permit
+ service-manage https permit
+ service-manage ping permit
+ service-manage ssh permit
+ service-manage snmp permit
+ service-manage telnet permit
+ dhcp select interface
+ dhcp server ip-range 192.168.0.1 192.168.0.254
+
+#
+interface GigabitEthernet1/0/8            
+ description uT:HZ-HZ-WL-CR-1.MAN.NE5000E:()10G 2/9/2/3::2017-04
+ undo shutdown
+ mtu 1600
+ ip address 100.127.244.1 255.255.255.252
+ service-manage ping permit
+ service-manage telnet permit
+#
+interface GigabitEthernet1/0/9
+ description NE40E-1-10GE1/0/3
+ undo shutdown
+ ip address 100.127.240.58 255.255.255.252
+ service-manage ping permit
+ service-manage telnet permit
+
+#
+interface GigabitEthernet3/0/9
+ description NE40E-2-10GE1/0/3
+ undo shutdown
+ ip address 100.127.240.66 255.255.255.252
+ service-manage ping permit
+ service-manage telnet permit
+#                                         
+
+interface GigabitEthernet5/0/8
+ undo shutdown
+ eth-trunk 0
+#
+
+interface GigabitEthernet7/0/8
+ undo shutdown
+ eth-trunk 0
+#
+interface Virtual-if0
+#
+interface NULL0
+#
+interface LoopBack0
+ description Router-ID
+ ip address 100.127.255.7 255.255.255.255
+#
+firewall zone local
+ set priority 100
+#
+firewall zone trust
+ set priority 85
+ add interface GigabitEthernet0/0/0
+ add interface GigabitEthernet1/0/8
+#                                         
+firewall zone untrust
+ set priority 5
+ add interface GigabitEthernet1/0/9
+ add interface GigabitEthernet3/0/9
+#
+firewall zone dmz
+ set priority 50
+ add interface Eth-Trunk0
+#
+bgp 65515
+ router-id 100.127.255.7
+ peer 100.127.240.57 as-number 64515
+ peer 100.127.240.65 as-number 64515
+ peer 100.127.244.2 as-number 64740
+ peer 100.127.244.2 description HZ-HZ-WL-CR-1.MAN.NE5000E
+ #
+ ipv4-family unicast
+  undo synchronization
+  network 100.127.48.0 255.255.240.0
+  peer 100.127.240.57 enable
+  peer 100.127.240.57 as-path-filter HZASdeny export
+  peer 100.127.240.57 route-policy rpZJitvnattoYiXin export
+  peer 100.127.240.65 enable
+  peer 100.127.240.65 as-path-filter HZASdeny export
+  peer 100.127.240.65 route-policy rpZJitvnattoYiXin export
+  peer 100.127.244.2 enable
+  peer 100.127.244.2 route-policy rpYiXintoHZCR export
+#
+route-policy rpYiXintoHZCR permit node 10
+ if-match ip-prefix plYiXinPingTai
+#
+route-policy rpZJitvnattoYiXin permit node 10
+ if-match ip-prefix plZJitvnatip
+#
+ip ip-prefix plYiXinPingTai index 10 permit 100.127.224.0 21
+ip ip-prefix plYiXinPingTai index 20 permit 100.127.232.0 21
+ip ip-prefix plZJitvnatip index 10 permit 100.127.48.0 20
+#
+ip as-path-filter HZASdeny deny _64740_
+ip as-path-filter HZASdeny permit .*
+#
+ip route-static 100.127.48.0 255.255.240.0 NULL0 description BlackHole
+#
+user-interface con 0
+ authentication-mode aaa
+user-interface vty 0 4
+ authentication-mode aaa
+user-interface vty 16 20                  
+#
+sa
+#
+location
+#
+nat address-group zjitv 0
+ mode pat
+ section 0 100.127.48.1 100.127.63.255
+#
+ slb
+#
+multi-interface
+ mode proportion-of-weight
+#
+right-manager server-group
+#
+agile-network
+#
+api
+#
+device-classification
+ device-group pc
+ device-group mobile-terminal
+ device-group undefined-group             
+#
+security-policy
+ rule name man_hulian
+  source-zone local
+  destination-zone trust
+  action permit
+ rule name HRP_xintiao
+  source-zone local
+  destination-zone dmz
+  action permit
+ rule name shanglian
+  source-zone local
+  destination-zone untrust
+  action permit
+ rule name HZCR_TO_YiXin
+  source-zone trust
+  source-zone untrust
+  destination-zone trust
+  destination-zone untrust
+  action permit
+#
+auth-policy
+#
+traffic-policy                            
+#
+policy-based-route
+#
+nat-policy
+ rule name HZCR_TO_YiXin
+  source-zone trust
+  destination-zone untrust
+  source-address 10.0.0.0 0.0.0.255
+  action nat address-group zjitv
+#
+proxy-policy
+#
+quota-policy
+#
+pcp-policy
+#
+dns-transparent-policy
+ dns transparent-proxy enable
+ mode based-on-multi-interface
+#
+rightm-policy
+#
+ sms
+#                                         
+return
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>                  
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>    disp
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>    display  int
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>    display  inter bri
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>    display  inter bri 
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>    display  inter bri 
+2017-05-03 22:50:03.640 
+PHY: Physical
+*down: administratively down
+(l): loopback
+(s): spoofing
+(b): BFD down
+(d): Dampening Suppressed
+InUti/OutUti: input utility/output utility
+Interface                   PHY   Protocol  InUti OutUti   inErrors  outErrors
+Eth-Trunk0                  up    up        0.01%  0.01%          0          0
+  GigabitEthernet5/0/8(10G) up    up           0%     0%          0          0
+  GigabitEthernet7/0/8(10G) up    up           0%     0%          0          0
+GigabitEthernet0/0/0        down  down         0%     0%          0          0
+GigabitEthernet1/0/0        down  down         0%     0%          0          0
+GigabitEthernet1/0/1        down  down         0%     0%          0          0
+GigabitEthernet1/0/2        down  down         0%     0%          0          0
+GigabitEthernet1/0/3        down  down         0%     0%          0          0
+GigabitEthernet1/0/4        down  down         0%     0%          0          0
+GigabitEthernet1/0/5        down  down         0%     0%          0          0
+GigabitEthernet1/0/6        down  down         0%     0%          0          0
+GigabitEthernet1/0/7        down  down         0%     0%          0          0
+GigabitEthernet1/0/8(10G)   up    up           0%     0%          0          0
+GigabitEthernet1/0/9(10G)   up    up           0%     0%          0          0
+GigabitEthernet2/0/0        down  down         0%     0%          0          0
+GigabitEthernet2/0/1        down  down         0%     0%          0          0
+GigabitEthernet2/0/2        down  down         0%     0%          0          0
+GigabitEthernet2/0/3        down  down         0%     0%          0          0
+GigabitEthernet2/0/4        down  down         0%     0%          0          0
+GigabitEthernet2/0/5        down  down         0%     0%          0          0
+GigabitEthernet2/0/6        down  down         0%     0%          0          0
+GigabitEthernet2/0/7        down  down         0%     0%          0          0
+GigabitEthernet3/0/0        down  down         0%     0%          0          0
+GigabitEthernet3/0/1        down  down         0%     0%          0          0
+GigabitEthernet3/0/2        down  down         0%     0%          0          0
+GigabitEthernet3/0/3        down  down         0%     0%          0          0
+GigabitEthernet3/0/4        down  down         0%     0%          0          0
+GigabitEthernet3/0/5        down  down         0%     0%          0          0
+GigabitEthernet3/0/6        down  down         0%     0%          0          0
+GigabitEthernet3/0/7        down  down         0%     0%          0          0
+GigabitEthernet3/0/8(10G)   down  down         0%     0%          0          0
+GigabitEthernet3/0/9(10G)   up    up           0%     0%          0          0
+GigabitEthernet4/0/0        down  down         0%     0%          0          0
+GigabitEthernet4/0/1        down  down         0%     0%          0          0
+GigabitEthernet4/0/2        down  down         0%     0%          0          0
+GigabitEthernet4/0/3        down  down         0%     0%          0          0
+GigabitEthernet4/0/4        down  down         0%     0%          0          0
+GigabitEthernet4/0/5        down  down         0%     0%          0          0
+GigabitEthernet4/0/6        down  down         0%     0%          0          0
+GigabitEthernet4/0/7        down  down         0%     0%          0          0
+GigabitEthernet4/0/8(10G)   down  down         0%     0%          0          0
+GigabitEthernet4/0/9(10G)   down  down         0%     0%          0          0
+GigabitEthernet5/0/0        down  down         0%     0%          0          0
+GigabitEthernet5/0/1        down  down         0%     0%          0          0
+GigabitEthernet5/0/2        down  down         0%     0%          0          0
+GigabitEthernet5/0/3        down  down         0%     0%          0          0
+GigabitEthernet5/0/4        down  down         0%     0%          0          0
+GigabitEthernet5/0/5        down  down         0%     0%          0          0
+GigabitEthernet5/0/6        down  down         0%     0%          0          0
+GigabitEthernet5/0/7        down  down         0%     0%          0          0
+GigabitEthernet5/0/9(10G)   down  down         0%     0%          0          0
+GigabitEthernet6/0/0        down  down         0%     0%          0          0
+GigabitEthernet6/0/1        down  down         0%     0%          0          0
+GigabitEthernet6/0/2        down  down         0%     0%          0          0
+GigabitEthernet6/0/3        down  down         0%     0%          0          0
+GigabitEthernet6/0/4        down  down         0%     0%          0          0
+GigabitEthernet6/0/5        down  down         0%     0%          0          0
+GigabitEthernet6/0/6        down  down         0%     0%          0          0
+GigabitEthernet6/0/7        down  down         0%     0%          0          0
+GigabitEthernet6/0/8(10G)   down  down         0%     0%          0          0
+GigabitEthernet6/0/9(10G)   down  down         0%     0%          0          0
+GigabitEthernet7/0/0        down  down         0%     0%          0          0
+GigabitEthernet7/0/1        down  down         0%     0%          0          0
+GigabitEthernet7/0/2        down  down         0%     0%          0          0
+GigabitEthernet7/0/3        down  down         0%     0%          0          0
+GigabitEthernet7/0/4        down  down         0%     0%          0          0
+GigabitEthernet7/0/5        down  down         0%     0%          0          0
+GigabitEthernet7/0/6        down  down         0%     0%          0          0
+GigabitEthernet7/0/7        down  down         0%     0%          0          0
+GigabitEthernet7/0/9(10G)   down  down         0%     0%          0          0
+GigabitEthernet8/0/0        down  down         0%     0%          0          0
+GigabitEthernet8/0/1        down  down         0%     0%          0          0
+GigabitEthernet8/0/2        down  down         0%     0%          0          0
+GigabitEthernet8/0/3        down  down         0%     0%          0          0
+GigabitEthernet8/0/4        down  down         0%     0%          0          0
+GigabitEthernet8/0/5        down  down         0%     0%          0          0
+GigabitEthernet8/0/6        down  down         0%     0%          0          0
+GigabitEthernet8/0/7        down  down         0%     0%          0          0
+GigabitEthernet8/0/8(10G)   down  down         0%     0%          0          0
+GigabitEthernet8/0/9(10G)   down  down         0%     0%          0          0
+LoopBack0                   up    up(s)        0%     0%          0          0
+NULL0                       up    up(s)        0%     0%          0          0
+Virtual-if0                 up    up(s)        --     --          0          0
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>       disp
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>       display  dev
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>       display  device 
+2017-05-03 22:50:09.410 
+Eudemon1000E-N7's Device status:
+Slot  Sub Type         Online    Power      Register       Status     Role  
+-------------------------------------------------------------------------------
+1     -   2XG8GE       Present   PowerOn    Registered     Normal     NA    
+2     -   8GEF         Present   PowerOn    Registered     Normal     NA    
+3     -   2XG8GE       Present   PowerOn    Registered     Normal     NA    
+4     -   2XG8GE       Present   PowerOn    Registered     Normal     NA    
+5     -   2XG8GE       Present   PowerOn    Registered     Normal     NA    
+6     -   2XG8GE       Present   PowerOn    Registered     Normal     NA    
+7     -   2XG8GE       Present   PowerOn    Registered     Normal     NA    
+8     -   2XG8GE       Present   PowerOn    Registered     Normal     NA    
+9     -   PWR          Present   PowerOn    Registered     Normal     NA    
+10    -   PWR          Present   PowerOn    Registered     Normal     NA    
+11    -   RPU          Present   PowerOn    Registered     Normal     Master
+13    -   FAN          Present   PowerOn    Registered     Normal     NA    
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>   
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>disp
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>display  bgp
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>display  bgp  pe
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>display  bgp  peer  
+2017-05-03 22:50:28.600 
+
+ BGP local router ID : 100.127.255.7
+ Local AS number : 65515
+ Total number of peers : 3                Peers in established state : 3
+
+  Peer            V          AS  MsgRcvd  MsgSent  OutQ  Up/Down       State PrefRcv
+
+  100.127.240.57  4       64515     9115     9116     0 0151h47m Established       4
+  100.127.240.65  4       64515     9117     9112     0 0151h46m Established       4
+  100.127.244.2   4       64740    10190     9016     0 0150h15m Established     122
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1> 
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>disp
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>display  ip rou
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>display  ip routing-table 
+2017-05-03 22:50:32.820 
+Route Flags: R - relay, D - download to fib
+------------------------------------------------------------------------------
+Routing Tables: Public
+         Destinations : 138      Routes : 138      
+
+Destination/Mask    Proto   Pre  Cost      Flags NextHop         Interface
+
+     10.192.0.0/10  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+     10.192.0.0/11  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.224.16.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.224.24.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.224.32.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.224.160.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.224.176.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.224.192.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.224.216.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.224.224.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.224.232.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+     10.225.0.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+     10.225.8.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.225.24.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.225.40.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.225.48.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.225.128.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.225.136.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.225.192.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.225.200.0/22  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.225.208.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+     10.226.0.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+     10.226.8.0/22  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.226.16.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.226.32.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.226.48.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.226.56.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.226.160.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.226.168.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.226.176.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+     10.227.0.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+     10.227.8.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.227.16.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.227.40.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.227.144.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.227.168.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.227.176.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.227.184.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.228.32.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.228.40.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.228.48.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.228.64.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.228.80.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.228.88.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.228.128.0/19  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.228.160.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.228.184.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.228.192.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.228.208.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.228.216.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.229.16.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.229.24.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.229.32.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.229.72.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.229.80.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.229.88.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.229.128.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.229.144.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.229.160.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.229.184.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.229.200.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.229.208.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.229.216.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+     10.230.0.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.230.16.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.230.32.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.230.48.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.230.80.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.230.96.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.230.112.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.230.120.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.230.144.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.230.160.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.230.176.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+     10.231.0.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.231.32.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.231.48.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.231.80.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.231.96.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.231.128.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.231.144.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.231.160.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.231.200.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.232.16.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.232.32.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.232.40.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.232.48.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.232.64.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.232.80.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.232.192.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.232.200.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.232.208.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.232.224.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.232.232.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.232.240.0/22  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.232.244.0/22  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.232.248.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+     10.233.0.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.233.16.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.233.32.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.233.64.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.233.80.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.233.88.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.233.128.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.233.144.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.233.176.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.233.208.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+     10.234.0.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.234.16.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.234.32.0/22  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.234.88.0/22  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.234.92.0/22  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+    10.234.96.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.234.112.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.234.128.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.234.144.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.234.160.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+     10.235.0.0/21  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.255.240.0/20  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.255.247.0/24  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.255.252.0/24  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   10.255.255.0/24  EBGP    255  0           D   100.127.244.2   GigabitEthernet1/0/8
+   100.127.48.0/20  Static  60   0           D   0.0.0.0         NULL0
+  100.127.224.0/20  EBGP    255  0           D   100.127.240.57  GigabitEthernet1/0/9
+  100.127.224.0/21  EBGP    255  0           D   100.127.240.57  GigabitEthernet1/0/9
+  100.127.232.0/21  EBGP    255  0           D   100.127.240.57  GigabitEthernet1/0/9
+  100.127.240.0/20  EBGP    255  0           D   100.127.240.57  GigabitEthernet1/0/9
+ 100.127.240.56/30  Direct  0    0           D   100.127.240.58  GigabitEthernet1/0/9
+ 100.127.240.58/32  Direct  0    0           D   127.0.0.1       GigabitEthernet1/0/9
+ 100.127.240.64/30  Direct  0    0           D   100.127.240.66  GigabitEthernet3/0/9
+ 100.127.240.66/32  Direct  0    0           D   127.0.0.1       GigabitEthernet3/0/9
+ 100.127.240.72/30  Direct  0    0           D   100.127.240.73  Eth-Trunk0
+ 100.127.240.73/32  Direct  0    0           D   127.0.0.1       Eth-Trunk0
+  100.127.244.0/30  Direct  0    0           D   100.127.244.1   GigabitEthernet1/0/8
+  100.127.244.1/32  Direct  0    0           D   127.0.0.1       GigabitEthernet1/0/8
+  100.127.255.7/32  Direct  0    0           D   127.0.0.1       LoopBack0
+      127.0.0.0/8   Direct  0    0           D   127.0.0.1       InLoopBack0
+      127.0.0.1/32  Direct  0    0           D   127.0.0.1       InLoopBack0
+
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>                       
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>disp
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>display  fi
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>display  firewall se
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>display  firewall session t
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>display  firewall session table all 
+2017-05-03 22:50:43.430 
+ Current Total Sessions : 21
+ bgp  VPN: public --> public  100.127.240.66:53910 --> 100.127.240.65:179
+ udp  VPN: public --> public  100.127.240.74:49152 --> 100.127.240.73:18514
+ udp  VPN: public --> public  183.142.113.20:1026 --> 100.127.227.193:12513
+ udp  VPN: public --> public  115.231.148.143:27014 --> 100.127.237.114:53775
+ bgp  VPN: public --> public  100.127.244.1:52012 --> 100.127.244.2:179
+ udp  VPN: public --> public  100.127.240.74:16384 --> 100.127.240.73:18514
+ ssh  VPN: public --> public  60.163.81.188:49539 --> 100.127.232.72:22
+ udp  VPN: public --> public  115.218.212.104:14052 --> 100.127.227.193:12513
+ telnet  VPN: public --> public  122.225.0.156:24916 --> 100.127.231.250:23
+ udp  VPN: public --> public  100.127.240.73:49152 --> 100.127.240.74:18514
+ ssh  VPN: public --> public  183.145.40.84:53441 --> 100.127.234.92:22
+ udp  VPN: public --> public  115.238.224.166:53 --> 100.127.224.12:42764
+ udp  VPN: public --> public  125.108.132.122:62193 --> 100.127.227.193:12513
+ udp  VPN: public --> public  183.131.67.210:10863 --> 100.127.237.114:53775
+ telnet  VPN: public --> public  100.127.244.2:62475 --> 100.127.244.1:23
+ bgp  VPN: public --> public  100.127.240.58:50140 --> 100.127.240.57:179
+ udp  VPN: public --> public  36.26.203.114:27616 --> 100.127.227.193:12513
+ udp  VPN: public --> public  36.24.83.24:2865 --> 100.127.229.244:33837
+ udp  VPN: public --> public  202.107.209.106:53 --> 100.127.234.75:45387
+ ssh  VPN: public --> public  115.196.100.6:34010 --> 100.127.239.117:22
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>    
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>
+HRP_M<HZ_dg_YX_MAN_2#2F06_E1000E-1>
